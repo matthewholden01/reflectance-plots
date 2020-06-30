@@ -1,4 +1,4 @@
 pandas
 tornado==6.0.4
 bokeh==2.1.1
-node.js==v10.13.0
+node.js==10.13.0
