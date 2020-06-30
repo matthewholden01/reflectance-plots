@@ -1,1 +1,1 @@
-web: bokeh serve --port=$PORT --allow-websocket-origin=reflectanceplots.herokuapp.com --address=0.0.0.0 --use-xheaders reflectance-plots
+web: bokeh serve --port=$PORT --allow-websocket-origin=reflectanceplots.herokuapp.com --address=0.0.0.0 --use-xheaders reflectance
