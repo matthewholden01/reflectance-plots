@@ -1,0 +1,26 @@
+
+{% extends base %}
+
+{% block preamble %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+{% endblock %}
+
+{% block contents%}
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <h1>Bokeh Reflectance Plots</h1>
+            </div>
+            <div class="col-9">
+                <h4>
+                    Example text
+                </h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                {{ embed(roots.rows) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
