@@ -16,21 +16,21 @@ import plot_tools #custom functions for saving time and space
 
 doc = curdoc()
 #handle specular data
-black_spec_mat = pd.read_csv('reflectance-plots/reflectance-plots/data/Specular_Reflect_Data/Specular_material.csv').set_index('Angle (Deg)')
+black_spec_mat = pd.read_csv('reflectance-plots/data/Specular_Reflect_Data/Specular_material.csv').set_index('Angle (Deg)')
 
 initial_intensity = 10.4629235
 for name in black_spec_mat:
     black_spec_mat[name] = black_spec_mat[name] / initial_intensity
 #Specular data sources
 black_spec_ref_ds = ColumnDataSource(black_spec_mat)
-black_spec_ratio_ds = ColumnDataSource(pd.read_csv('reflectance-plots/reflectance-plots/data/Specular_Reflect_Data/Spec_Ratio.csv').set_index('Angle (Deg)'))
+black_spec_ratio_ds = ColumnDataSource(pd.read_csv('reflectance-plots/data/Specular_Reflect_Data/Spec_Ratio.csv').set_index('Angle (Deg)'))
 #Total data sources
-black_tot_df = ColumnDataSource(pd.read_csv('reflectance-plots/reflectance-plots/data/Total_Reflect_Data/Black_Materials_total_reflecatance.csv').set_index('nm'))
-white_tot_df = ColumnDataSource(pd.read_csv('reflectance-plots/reflectance-plots/data/Total_Reflect_Data/SPIE18_white_all.csv').set_index('nm'))
+black_tot_df = ColumnDataSource(pd.read_csv('reflectance-plots/data/Total_Reflect_Data/Black_Materials_total_reflecatance.csv').set_index('nm'))
+white_tot_df = ColumnDataSource(pd.read_csv('reflectance-plots/data/Total_Reflect_Data/SPIE18_white_all.csv').set_index('nm'))
 #lamb data sources
-white_lamb_pow_ds = ColumnDataSource(pd.read_csv('reflectance-plots/reflectance-plots/data/Lambertian_Reflect_Data/Lamb_Reflect_Power.csv').set_index('Angle (Deg)'))
-white_lamb_scaled_ds = ColumnDataSource(pd.read_csv('reflectance-plots/reflectance-plots/data/Lambertian_Reflect_Data/Lamb_Reflect_Scaled.csv').set_index('Angle (Deg)'))
-white_lamb_res_ds = ColumnDataSource(pd.read_csv('reflectance-plots/reflectance-plots/data/Lambertian_Reflect_Data/Lamb_Resid.csv').set_index('Angle (Deg)'))
+white_lamb_pow_ds = ColumnDataSource(pd.read_csv('reflectance-plots/data/Lambertian_Reflect_Data/Lamb_Reflect_Power.csv').set_index('Angle (Deg)'))
+white_lamb_scaled_ds = ColumnDataSource(pd.read_csv('reflectance-plots/data/Lambertian_Reflect_Data/Lamb_Reflect_Scaled.csv').set_index('Angle (Deg)'))
+white_lamb_res_ds = ColumnDataSource(pd.read_csv('reflectance-plots/data/Lambertian_Reflect_Data/Lamb_Resid.csv').set_index('Angle (Deg)'))
 #create figures plots 
 total_fig = plot_tools.make_plot('Wavelength (nm)', 'Total Reflectance (%)', 'Total')
 total_fig.x_range.start = 250
