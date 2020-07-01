@@ -1,3 +1,0 @@
-pandas
-tornado==6.0.4
-bokeh==2.1.1
