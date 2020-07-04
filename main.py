@@ -6,15 +6,16 @@ Created on Sun Mar 29 21:29:49 2020
 """
 from bokeh.palettes import turbo
 from bokeh.palettes import Dark2_5 as palette
-from bokeh.models import ColumnDataSource, Select, MultiChoice
+from bokeh.models import ColumnDataSource, Select, MultiChoice, Div, Panel, Tabs
 from custom_extensions import IonRangeSlider
-from bokeh.layouts import layout, row, column
+from bokeh.layouts import row, layout, column
 from bokeh.io import curdoc
 import pandas as pd
 import itertools
 import plot_tools #custom functions for saving time and space
 
-doc = curdoc()
+
+
 #handle specular data
 black_spec_mat = pd.read_csv('reflectance-plots/data/Specular_Reflect_Data/Specular_material.csv').set_index('Angle (Deg)')
 
@@ -32,15 +33,13 @@ white_lamb_pow_ds = ColumnDataSource(pd.read_csv('reflectance-plots/data/Lambert
 white_lamb_scaled_ds = ColumnDataSource(pd.read_csv('reflectance-plots/data/Lambertian_Reflect_Data/Lamb_Reflect_Scaled.csv').set_index('Angle (Deg)'))
 white_lamb_res_ds = ColumnDataSource(pd.read_csv('reflectance-plots/data/Lambertian_Reflect_Data/Lamb_Resid.csv').set_index('Angle (Deg)'))
 #create figures plots 
-total_fig = plot_tools.make_plot('Wavelength (nm)', 'Total Reflectance (%)', 'Total')
+total_fig = plot_tools.make_plot('Wavelength (nm)', 'Total Reflectance (%)', 'Total Reflectance vs nm')
 total_fig.x_range.start = 250
 total_fig.x_range.end = 2500
 
-spec_fig = plot_tools.make_plot('Angle', 'Specular Reflectance', 'Specular')
-lamb_fig = plot_tools.make_plot('Angle', 'Power (uW)', 'Lambertian')
-lamb_resid_fig = plot_tools.make_plot('Angle', 'Power (uW)', 'Lambertian-Residual')
-lamb_resid_fig.plot_width = 650
-lamb_resid_fig.plot_height = 250
+spec_fig = plot_tools.make_plot('Angle', 'Specular Reflectance', 'Specular Reflectance vs Angle')
+lamb_fig = plot_tools.make_plot('Angle', 'Power (uW)', 'Lambertian Reflectance vs Angle')
+lamb_resid_fig = plot_tools.make_plot('Angle', 'Power (uW)', 'Lambertian-Residual Reflectance vs Angle')
 #palette for total reflecatance
 total_palette = turbo(len(black_tot_df.data) + len(white_tot_df.data))
 #palette for specular reflectance
@@ -72,22 +71,26 @@ all_white_renderers = white_tot_renderers + white_lamb_renderers + white_lamb_re
 all_renderers = all_black_renderers + all_white_renderers
 
 multiChoiceList = []
-for rnds in black_tot_renderers+white_tot_renderers:
-    multiChoiceList.append(rnds.name)
+for rnds in all_renderers:
+    if rnds.name not in multiChoiceList:
+        multiChoiceList.append(rnds.name)
 
-multiChoice = MultiChoice(title = "Show/Hide Materials", options = multiChoiceList)
+multiChoice = MultiChoice(title = "Show/Hide Materials", options = multiChoiceList, name = "multi")
 #Select Widgets
-mat_color_select = Select(title="Filter Material Color", options=['Select Material','Black', 'White', 'All'], value = 'Select Material')
-spec_select = Select(title = "Variable Type", options = ['Reflectance', 'Ratio'])
+mat_color_select = Select(title="Filter Material Color", options=['Select Material','Black', 'White', 'All'], value = 'Select Material', name = "color")
+spec_select = Select(title = "Variable Type", options = ['Reflectance', 'Ratio'], name = "spec_select")
 
-tot_slider = IonRangeSlider(start = 250, end = 2500, step = 1, range = (250, 2500), title = 'Total Reflectance Range')
-spec_slider = IonRangeSlider(start = 10, end = 160, step = 1, range = (10, 160), title = 'Specular Reflectance Range')
-lamb_slider = IonRangeSlider(start = 10, end = 90, step = 1, range = (10, 90), title = 'Lambertian Reflectance Range')
-resid_slider = IonRangeSlider(start = 10, end = 90, step = 1, range = (10, 90), title = 'Lambertian Residual Range')
 
-tot_fig_label = plot_tools.make_label(True)
-spec_fig_label = plot_tools.make_label(True)
-lamb_fig_label = plot_tools.make_label(True)
+
+tot_slider = IonRangeSlider(start = 250, end = 2500, step = 1, range = (250, 2500), visible = False, title = 'Total Reflectance Range')
+spec_slider = IonRangeSlider(start = 10, end = 160, step = 1, range = (10, 160), visible = False, title = 'Specular Reflectance Range')
+lamb_slider = IonRangeSlider(start = 10, end = 90, step = 1, range = (10, 90), visible = False, title = 'Lambertian Reflectance Range')
+resid_slider = IonRangeSlider(start = 10, end = 90, step = 1, range = (10, 90), visible = False, title = 'Lambertian Residual Range')
+
+
+tot_fig_label = plot_tools.make_label(total_fig, True)
+spec_fig_label = plot_tools.make_label(spec_fig, True)
+lamb_fig_label = plot_tools.make_label(lamb_fig, True)
 
 #update callback for total reflectance select widget
 def update_mat_color(attr, old, new):
@@ -153,6 +156,11 @@ def update_multi_choice(attr, old, new):
     tot_fig_label.visible = check_for_data(black_tot_renderers+white_tot_renderers)
     spec_fig_label.visible = check_for_data(black_spec_ref_renderers)
     lamb_fig_label.visible = check_for_data(white_lamb_renderers)
+
+def update_tabs(attr, old, new):
+    wv = new == 2
+    tot_slider.visible, spec_slider.visible, lamb_slider.visible, resid_slider.visible = wv, wv, wv, wv
+    
 def check_for_data(renderers):
     for x in renderers:
         if x.visible:
@@ -179,9 +187,36 @@ spec_fig.add_layout(spec_fig_label)
 lamb_fig.add_layout(lamb_fig_label)
 lamb_resid_fig.add_layout(lamb_fig_label)
 
-widgets = column(row(mat_color_select, spec_select, multiChoice),tot_slider, spec_slider,
-                 lamb_slider, resid_slider)
-plots = column(total_fig, spec_fig, lamb_fig, lamb_resid_fig)
-doc_layout = row(plots, widgets, name = "rows")
 
-doc.add_root(doc_layout)
+instructions = Div(text = """Welcome to the Black and White materials data application. In order to interact with the plots, please use the navigation tabs above.""", css_classes=["grey-darken-4-text"], style = {"font-size": "12px;"},width = 600)
+filter_instr = Div(text = "<b>Filters:</b> <i>Material Color</i>, <i>Specific Material</i>, or <i>Specular Reflectance Display</i>. Use the 'Filter Material Color' dropdown menu to see data for black materials, white materials, or even all of them but if you choose to see them all the graphs may get cluttered. Use the 'Show/Hide Material' menu to view specific materials; you can either type in a material name in order to find it or scroll through the list of options.", css_classes=["grey-darken-4-text"], style={"font-size": "12px;"},width = 600)
+range_instr = Div(text = "<b>Range Sliders:</b> You can use the range sliders in order to narrow down the range x range of nano-meters or degrees that you would like to view, just slide the the minimum value and maximum value bars to your liking.", css_classes=["grey-darken-4-text"], style={"font-size": "12px;"},width = 600)
+tools_instr = Div(text = "<b>Other Tools:</b> There are a variety of ways to interact with the data in the different plots and more to come! At the bottom of each graph you will find a toolbar with different symbols. The 'Pan' option will allow you to click and drag the graph to shift the displayed data, the 'box zoom' tool allows you to click and drag a specific box area to zoom in on while the 'Wheel Zoom' tool allows you to zoom using your mouse wheel or your trackpad, and the save button will download a screenshot of the current status of the plot you are viewing. If you are curious about what material you are viewing or what its exact data is, hover over the line with your mouse and its information will be displayed.", style={"font-size": "12px;"},css_classes=["grey-darken-4-text"], width = 600)
+
+total_fig.name = "total"
+spec_fig.name = "spec"
+lamb_fig.name = "lamb"
+lamb_resid_fig.name = "resid"
+
+instr_layout = column(instructions, filter_instr, range_instr, tools_instr)
+filter_layout = row(column(mat_color_select, spec_select), multiChoice)
+slider_layout = layout([tot_slider, spec_slider],
+                       [lamb_slider, resid_slider])
+
+intro_tab = Panel(child = instr_layout, title = "Instructions")
+filter_tab = Panel(child = filter_layout, title = "Filters")
+slider_tab = Panel(child = slider_layout, title = "Range Sliders")
+
+tabs = Tabs(tabs = [intro_tab, filter_tab, slider_tab], active = 0, name = "tabs", css_classes = ["white"])
+
+tabs.on_change('active', update_tabs)
+
+spec_fig.plot_height = 400
+
+curdoc().add_root(total_fig)
+curdoc().add_root(spec_fig)
+curdoc().add_root(lamb_fig)
+curdoc().add_root(lamb_resid_fig)
+curdoc().add_root(tabs)
+
+curdoc().title = "B/W Materials Reflectance"

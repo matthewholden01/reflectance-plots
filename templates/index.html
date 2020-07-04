@@ -2,25 +2,43 @@
 {% extends base %}
 
 {% block preamble %}
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="reflectance-plots/static/css/materialize.css" media="screen,projection">
+    <link rel="stylesheet" type="text/css" href="reflectance-plots/static/css/all.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 {% endblock %}
 
 {% block contents%}
-    <div class="container">
-        <div class="row">
-            <div class="col-3">
-                <h1>Bokeh Reflectance Plots</h1>
-            </div>
-            <div class="col-9">
-                <h4>
-                    Example text
-                </h4>
-            </div>
+<body class="grey lighten-4">
+    <nav class="teal lighten-4" role="navigation">
+        <div class="nav-wrapper container">
+            <a id="logo-container" href="#" class="brand-logo">Logo</a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="https://github.com/matthewholden01/reflectance-plots"><i class="fab fa-github"></i></a>
+            </ul>
         </div>
-        <div class="row">
-            <div class="col-12">
-                {{ embed(roots.rows) }}
+    </nav>
+    <div class="container">
+        <div class="main_container">
+            <div class="section">
+                <h1>Black and White Materials Refelcatance Data</h1>
             </div>
+            <div class="divider"></div>
+            <div class="row">
+                <div class="col s5 left z-depth-2 blue-grey darken-2">{{embed(roots.tabs)}}</div>
+                <div class="col s6 right z-depth-4 rounded">{{embed(roots.spec)}}</div>
+            </div>
+            <div class="row">
+                <div class="col s6 left-aligned z-depth-4 rounded">{{embed(roots.lamb)}}</div>
+                <div class="col s6 right-aligned z-depth-4 rounded">{{embed(roots.resid)}}</div>
+            </div>
+            <div class="row">
+                <div class="col s12 z-depth-4 rounded">{{embed(roots.total)}}</div>
+            </div>  
         </div>
     </div>
+    <script type="text/javascript" src="reflectance-plots/static/js/materialize.js"></script>
+    <script type="text/javascript" src="reflectance-plots/static/js/all.js"></script>
+</body>
 {% endblock %}

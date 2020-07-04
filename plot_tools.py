@@ -21,7 +21,8 @@ def make_plot(x_label, y_label, title):
            x_axis_label = x_label, y_axis_label = y_label,
            title_location = 'above', sizing_mode = "scale_both",
            toolbar_location = "below",
-           tools = "box_zoom, pan, wheel_zoom, save")
+           tools = "box_zoom, pan, wheel_zoom, save", 
+           border_fill_alpha = 0.6)
     fig.x_range.range_padding = 0
     fig.x_range.only_visible = True
     fig.y_range.only_visible = True
@@ -65,7 +66,8 @@ def plot_dash_dots(ds, myPalette, fig, index, visible):
             renderers.append(f)
     return renderers
 
-def make_label(visibility):
-    new_label = Label(x = 100, y = 100, x_units = 'screen', y_units = 'screen',
+def make_label(figure, visibility):
+    new_label = Label(x = figure.plot_width / 2, y = figure.plot_height / 2,
+                      x_units = 'screen', y_units = 'screen', 
                       text = 'No Data For this Material', visible = visibility)
     return new_label
