@@ -7,36 +7,43 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        div.scrollable {
+            overflow: auto;
+        }
+    </style>
 {% endblock %}
 
 {% block contents%}
 <body class="grey lighten-4">
     <nav class="teal lighten-4" role="navigation">
         <div class="nav-wrapper container">
-            <a id="logo-container" href="#" class="brand-logo">Logo</a>
+            <a id="logo-container" href="#" class="brand-logo">Black and White Materials Reflectance Data</a>
             <ul class="right hide-on-med-and-down">
                 <li><a href="https://github.com/matthewholden01/reflectance-plots"><i class="fab fa-github"></i></a>
+                <li><a href="#"><i class="fab fa-github"></i></a>
             </ul>
         </div>
     </nav>
     <div class="container">
-        <div class="main_container">
             <div class="section">
                 <h1>Black and White Materials Refelcatance Data</h1>
             </div>
             <div class="divider"></div>
+
             <div class="row">
-                <div class="col s5 left z-depth-2 blue-grey darken-2">{{embed(roots.tabs)}}</div>
-                <div class="col s6 right z-depth-4 rounded">{{embed(roots.spec)}}</div>
+                <div class="card-panel col s12 m12 l12 z-depth-2">{{embed(roots.tabs)}}</div>
             </div>
             <div class="row">
-                <div class="col s6 left-aligned z-depth-4 rounded">{{embed(roots.lamb)}}</div>
+                <div class="col s12 m12 l12 z-depth-4 rounded">{{embed(roots.total)}}</div>
+            </div> 
+            <div class="row">
+                <div class="col s12 m12 l12 z-depth-4 rounded">{{embed(roots.spec)}}</div>
+             </div>
+            <div class="row">
+                <div class="col s6 m6 l6 left-aligned z-depth-4 rounded">{{embed(roots.lamb)}}</div>
                 <div class="col s6 right-aligned z-depth-4 rounded">{{embed(roots.resid)}}</div>
-            </div>
-            <div class="row">
-                <div class="col s12 z-depth-4 rounded">{{embed(roots.total)}}</div>
-            </div>  
-        </div>
+            </div> 
     </div>
     <script type="text/javascript" src="reflectance-plots/static/js/materialize.js"></script>
     <script type="text/javascript" src="reflectance-plots/static/js/all.js"></script>

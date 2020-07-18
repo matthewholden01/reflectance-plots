@@ -30,12 +30,12 @@ def make_plot(x_label, y_label, title):
     return fig
 
 
-def plot_spec(ds, myPalette, fig, index, visible):
+def plot_spec(ds, myPalette, fig, index, visible, tags):
     renderers = []
     for name, color in zip(ds.data, myPalette):
         if name != index:
             r = fig.line(index, name, color = color, line_width = .7, 
-                         source = ds, visible = visible, name = name)
+                         source = ds, visible = visible, name = name, tags = tags)
             renderers.append(r)
     return renderers
 
@@ -44,11 +44,11 @@ def plot_lamb(ds, ds2, myPalette, fig, index, visible):
     for name, name2, color in zip(ds.data, ds2.data, myPalette):
         if name != index:
             r = fig.line(index, name, color = color, line_width = .7, 
-                         source = ds, visible = visible, name = name)
+                         source = ds, visible = visible, name = name, tags = ["white_lamb"])
             f = fig.line(index, name2, color = color, line_width = .7, 
-                         source = ds2, visible = visible, line_dash = 'dashed', name = name2)
+                         source = ds2, visible = visible, line_dash = 'dashed', name = name2, tags = ["white_lamb"])
             c = fig.circle(index, name2, color = color, source = ds2, visible = visible, 
-                           name = name2)
+                           name = name2, tags = ["none"])
             renderers.append(r)
             renderers.append(f)
             renderers.append(c)
@@ -58,10 +58,10 @@ def plot_dash_dots(ds, myPalette, fig, index, visible):
     renderers = []
     for name, color in zip(ds.data, myPalette):
         if name != index:
-            r = fig.line(index, name, line_width = .7, line_dash = 'dashed', 
-                         color = color, source = ds, visible = visible, name = name)
+            r = fig.line(index, name, line_width = .7, line_dash = 'dashed',
+                         color = color, source = ds, visible = visible, name = name, tags = ["white_res"])
             f = fig.circle(index, name, color = color, source = ds, visible = visible,
-                           name = name)
+                           name = name, tags = ["none"])
             renderers.append(r)
             renderers.append(f)
     return renderers
