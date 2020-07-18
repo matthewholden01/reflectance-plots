@@ -4,6 +4,7 @@ Created on Sun Mar 29 21:29:49 2020
 
 @author: Matthew
 """
+from os.path import dirname, join
 from bokeh.palettes import turbo
 from bokeh.palettes import Dark2_5 as palette
 from bokeh.models import (ColumnDataSource, Select, MultiChoice, Div, Panel, Tabs,
@@ -15,7 +16,7 @@ import pandas as pd
 import itertools
 import plot_tools #custom functions for saving time and space
 import time
-from bokeh.core.query import match
+import csv
 
 
 
@@ -96,6 +97,12 @@ spec_slider = IonRangeSlider(start = 10, end = 160, step = 1, range = (10, 160),
 lamb_slider = IonRangeSlider(start = 10, end = 90, step = 1, range = (10, 90), sizing_mode = "scale_both", visible = False, title = 'Lambertian Reflectance Range')
 resid_slider = IonRangeSlider(start = 10, end = 90, step = 1, range = (10, 90), sizing_mode = "scale_both", visible = False, title = 'Lambertian Residual Range')
 
+totb_button = Button(label = "Downlaod Black Total Reflectance Data", button_type = "success", width = 200, height = 50)
+totw_button = Button(label = "Download White Total Reflectance Data", button_type = "success", width = 200, height = 50)
+spec_button = Button(label = "Download Specular Reflectance Data", button_type = "success", width = 200, height = 50)
+spec_rat_button = Button(label = "Download Specular Reflectance Ratio Data", button_type = "success", width = 200, height = 50)
+lamb_button = Button(label = "Download Lambertian Reflectance Data", button_type = "success", width = 200, height = 50)
+resid_button = Button(label = "Download Lambertian Residual Reflectance Data", button_type = "success", width = 200, height = 50)
 
 tot_fig_label = plot_tools.make_label(total_fig, True)
 spec_fig_label = plot_tools.make_label(spec_fig, True)
@@ -109,8 +116,6 @@ for i, name in enumerate(multiChoiceList):
         count += 1
     elif i == len(multiChoiceList) - 1:
         checkbox_groups.append(CheckboxGroup(labels=multiChoiceList[i-(i%28):i+1], width = 300, height = 400, name=f"checkbox_group_from_{count}"))
-
-download_button = Button(label = "Downlaod Data", button_type = "success", width = 200, height = 150)
 
 #update callback for total reflectance select widget
 def update_mat_color(attr, old, new):
@@ -190,14 +195,34 @@ def check_for_data(renderers):
             return False
     return True
 
-csv_dict = {}
-def on_download():
-    for rnd in all_renderers:
-        for i, group in enumerate(checkbox_groups):
-            if match(rnd, {'tags' : 'black_tot'}):
-                print('Yes')
-            else:
-                print('no')
+tot_dict_for_csv = {}
+spec_dict_for_csv = {}
+lamb_dict_for_csv = {}
+output_tot_ds = ColumnDataSource(data = tot_dict_for_csv)
+output_spec_ds = ColumnDataSource(data = spec_dict_for_csv)
+output_lamb_ds = ColumnDataSource(data = lamb_dict_for_csv)
+def on_change(attr, old, new):
+    for blk_t, wht_t, spec, spec_r, wht_l, wht_lr in zip(black_tot_renderers, white_tot_renderers, black_spec_ref_renderers, black_spec_ratio_renderers, white_lamb_renderers, white_lamb_resid_renderers):
+        for group in checkbox_groups:
+            if blk_t.name in group.labels:
+                if group.labels.index(blk_t.name) in group.active:
+                    tot_dict_for_csv.update({blk_t.name : black_tot_df.data[blk_t.name]})
+            if wht_t.name in group.labels:
+                if group.labels.index(wht_t.name) in group.active:
+                    tot_dict_for_csv.update({wht_t.name : white_tot_df.data[wht_t.name]})
+            if spec.name in group.labels:
+                if group.labels.index(spec.name) in group.active:
+                    spec_dict_for_csv.update({spec.name : black_spec_ref_ds.data[spec.name]})
+            if spec_r.name in group.labels:
+                if group.labels.index(spec_r.name) in group.active:
+                    spec_dict_for_csv.update({spec_r.name : black_spec_ratio_ds.data[spec_r.name]})
+            if wht_l.name in group.labels:
+                if group.labels.index(wht_l.name) in group.active:
+                    lamb_dict_for_csv.update({wht_l.name: white_lamb_pow_ds.data[wht_l.name]})
+                    lamb_dict_for_csv.update({wht_l.name: white_lamb_scaled_ds.data[wht_l.name]})
+            if wht_lr.name in group.labels:
+                if group.labels.index(wht_lr.name) in group.active:
+                    lamb_dict_for_csv.update({wht_lr.name : white_lamb_res_ds.data[wht_l.name]})
 
 tot_slider.on_change('range', update_tot_slider)
 spec_slider.on_change('range', update_spec_slider)
@@ -208,7 +233,21 @@ mat_color_select.on_change('value', update_mat_color)
 spec_select.on_change('value', update_spec)
 multiChoice.on_change('value', update_multi_choice)
 
-download_button.on_click(on_download)
+for groups in checkbox_groups:
+    groups.on_change('active', on_change)
+
+totb_button.js_on_click(CustomJS(args=dict(source= black_tot_df),
+                                     code=open(join(dirname(__file__), "download.js")).read()))
+totw_button.js_on_click(CustomJS(args=dict(source= white_tot_df),
+                                     code=open(join(dirname(__file__), "download.js")).read()))
+spec_button.js_on_click(CustomJS(args=dict(source= black_spec_ref_ds),
+                                     code=open(join(dirname(__file__), "download.js")).read()))
+spec_rat_button.js_on_click(CustomJS(args=dict(source= black_spec_ratio_ds),
+                                     code=open(join(dirname(__file__), "download.js")).read()))
+lamb_button.js_on_click(CustomJS(args=dict(source=white_lamb_pow_ds),
+                                     code=open(join(dirname(__file__), "download.js")).read()))
+resid_button.js_on_click(CustomJS(args=dict(source=white_lamb_res_ds),
+                                     code=open(join(dirname(__file__), "download.js")).read()))
 
 total_fig.add_tools(plot_tools.make_hovertool('nm','nm', 'Total Reflectance %'))
 spec_fig.add_tools(plot_tools.make_hovertool('{Angle (Deg)}','Angle', 'Specular Reflectance %'))
@@ -221,11 +260,11 @@ spec_fig.add_layout(spec_fig_label)
 lamb_fig.add_layout(lamb_fig_label)
 lamb_resid_fig.add_layout(lamb_fig_label)
 
-
-instructions = Div(text = """<b>Welcome</b> to the Black and White materials data application. In order to interact with the plots, please use the navigation tabs above.""", sizing_mode = 'scale_both', css_classes=["flow-text"])
-filter_instr = Div(text = "<b>Filters:</b> <i>Material Color</i>, <i>Specific Material</i>, or <i>Specular Reflectance Display</i>. Use the 'Filter Material Color' dropdown menu to see data for black materials, white materials, or even all of them but if you choose to see them all the graphs may get cluttered. Use the 'Show/Hide Material' menu to view specific materials; you can either type in a material name in order to find it or scroll through the list of options.", sizing_mode = 'scale_both', css_classes=["flow-text"])
-range_instr = Div(text = "<b>Range Sliders:</b> You can use the range sliders in order to narrow down the range x range of nano-meters or degrees that you would like to view, just slide the the minimum value and maximum value bars to your liking.", sizing_mode = 'scale_both', css_classes=["flow-text"])
-tools_instr = Div(text = "<b>Other Tools:</b> There are a variety of ways to interact with the data in the different plots and more to come! At the bottom of each graph you will find a toolbar with different symbols. The 'Pan' option will allow you to click and drag the graph to shift the displayed data, the 'box zoom' tool allows you to click and drag a specific box area to zoom in on while the 'Wheel Zoom' tool allows you to zoom using your mouse wheel or your trackpad, and the save button will download a screenshot of the current status of the plot you are viewing. If you are curious about what material you are viewing or what its exact data is, hover over the line with your mouse and its information will be displayed.", sizing_mode = 'scale_both', css_classes=["flow-text"])
+spacer = Div(text = "", width = 200)
+instructions = Div(text = """<b>Welcome</b> to the Black and White materials data application. In order to interact with the plots, please use the navigation tabs above.""", css_classes=["flow-text", "my-font"])
+filter_instr = Div(text = "<b>Filters:</b> <i>Material Color</i>, <i>Specific Material</i>, or <i>Specular Reflectance Display</i>. Use the 'Filter Material Color' dropdown menu to see data for black materials, white materials, or even all of them but if you choose to see them all the graphs may get cluttered. Use the 'Show/Hide Material' menu to view specific materials; you can either type in a material name in order to find it or scroll through the list of options.", css_classes=["flow-text"])
+range_instr = Div(text = "<b>Range Sliders:</b> You can use the range sliders in order to narrow down the range x range of nano-meters or degrees that you would like to view, just slide the the minimum value and maximum value bars to your liking.",  css_classes=["flow-text"])
+tools_instr = Div(text = "<b>Other Tools:</b> There are a variety of ways to interact with the data in the different plots and more to come! At the bottom of each graph you will find a toolbar with different symbols. The 'Pan' option will allow you to click and drag the graph to shift the displayed data, the 'box zoom' tool allows you to click and drag a specific box area to zoom in on while the 'Wheel Zoom' tool allows you to zoom using your mouse wheel or your trackpad, and the save button will download a screenshot of the current status of the plot you are viewing. If you are curious about what material you are viewing or what its exact data is, hover over the line with your mouse and its information will be displayed.", css_classes=["flow-text"])
 
 total_fig.name = "total"
 spec_fig.name = "spec"
@@ -236,7 +275,7 @@ instr_layout = column(instructions, filter_instr, range_instr, tools_instr, sizi
 filter_layout = row(mat_color_select, spec_select, multiChoice, sizing_mode = 'scale_width')
 slider_layout = row(tot_slider, spec_slider, lamb_slider, resid_slider)
 download_layout = row(checkbox_groups, sizing_mode = 'fixed', css_classes = ['scrollable'])
-lay = column(download_button)
+lay = row(column(totb_button, totw_button), spacer, column(spec_button, spec_rat_button), spacer, column(lamb_button, resid_button))
 
 intro_tab = Panel(child = instr_layout, title = "Instructions")
 filter_tab = Panel(child = filter_layout, title = "Filters")
