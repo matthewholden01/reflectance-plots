@@ -8,6 +8,7 @@ function data_to_csv(source){
 		for(let j = 0; j < columns.length; j++){
 			const column = columns[j]
 			row.push(source.data[column][i].toString())
+			console.log(row)
 		}
 		lines.push(row.join(','))
 	}

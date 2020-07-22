@@ -1,0 +1,31 @@
+
+        .bk-root .bk-btn-success {
+            text-decoration: none;
+            color: #fff;
+            background-color: #26a69a;
+            text-align: center;
+            letter-spacing: .5px;
+            -webkit-transition: background-color .2s ease-out;
+            transition: background-color .2s ease-out;
+            cursor: pointer;
+        }
+        .bk-root .bk-btn-success:focus {
+            background-color: #1d7d74;
+        }
+        .bk-root .bk-btn-success:hover{
+            background-color: #2bbbad;
+        }
+        .bk-root .bk-btn-success:active{
+            text-decoration: none;
+            color: #fff;
+            background-color: #26a69a;
+            text-align: center;
+            letter-spacing: .5px;
+            -webkit-transition: background-color .2s ease-out;
+            transition: background-color .2s ease-out;
+            cursor: pointer;
+        }
+        .logo-img {
+            max-height: 64px!important;
+            padding: 15px 0!important;
+        }

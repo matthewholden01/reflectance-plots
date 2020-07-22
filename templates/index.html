@@ -6,44 +6,62 @@
     <link rel="stylesheet" type="text/css" href="reflectance-plots/static/css/all.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" scale_bothcontent="width=device-width, initial-scale=1.0"/>
     <style>
+        {% include 'custom.min.css' %}
         div.scrollable {
             overflow: auto;
         }
+        .tamu-maroon {
+            background-color: #500000;
+        }
+        .my-edge {
+            width: 125%;
+            box-shadow: 0px 0px 20px #500000;
+            border-radius: 7px;
+        }
+        .my-text{
+            font-size: 16px;
+            font-family: "Font Awesome 5 Free";
+        }
+
     </style>
 {% endblock %}
 
 {% block contents%}
 <body class="grey lighten-4">
-    <nav class="teal lighten-4" role="navigation">
+    <nav class="tamu-maroon" role="navigation">
         <div class="nav-wrapper container">
-            <a id="logo-container" href="#" class="brand-logo">Black and White Materials Reflectance Data</a>
+            <a href="https://tamu.edu" class="logo-img"><img src="reflectance-plots/static/TAM-PrimaryMarkB-white.png" width="auto" height="75" ></a>
             <ul class="right hide-on-med-and-down">
+                <li><a href="https://instrumentation.tamu.edu/"><i class="medium material-icons">home</i></a>
                 <li><a href="https://github.com/matthewholden01/reflectance-plots"><i class="fab fa-github"></i></a>
-                <li><a href="#"><i class="fab fa-github"></i></a>
+                <li><a href="#"><i class="fab fa-python"></i></a>
             </ul>
         </div>
     </nav>
-    <div class="container">
-            <div class="section">
-                <h1>Black and White Materials Refelcatance Data</h1>
-            </div>
-            <div class="divider"></div>
+    <div class="container grey lighten-3 z-depth-2 my-edge">
+        <div class="container">
+                <div class="section">
+                    <h1 class="flow-text" font-family="Font Awesome 5 Free"><b>Black and White Materials Reflectance Data</b></h1>
+                </div>
+                <div class="divider"></div>
 
-            <div class="row">
-                <div class="card-panel col s12 m12 l12 z-depth-2">{{embed(roots.tabs)}}</div>
-            </div>
-            <div class="row">
-                <div class="col s12 m12 l12 z-depth-4 rounded">{{embed(roots.total)}}</div>
-            </div> 
-            <div class="row">
-                <div class="col s12 m12 l12 z-depth-4 rounded">{{embed(roots.spec)}}</div>
-             </div>
-            <div class="row">
-                <div class="col s6 m6 l6 left-aligned z-depth-4 rounded">{{embed(roots.lamb)}}</div>
-                <div class="col s6 right-aligned z-depth-4 rounded">{{embed(roots.resid)}}</div>
-            </div> 
+                <div class="row">
+                    <div class="card-panel col s12 m12 l12 z-depth-2">{{embed(roots.tabs)}}</div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m12 l12 z-depth-4 rounded">{{embed(roots.total)}}</div>
+                </div> 
+                <div class="row">
+                    <div class="col s12 m12 l12 z-depth-4 rounded">{{embed(roots.spec)}}</div>
+                 </div>
+                <div class="row">
+                    <div class="col s6 m6 l6 left-aligned z-depth-4 rounded">{{embed(roots.lamb)}}</div>
+                    <div class="col s6 right-aligned z-depth-4 rounded">{{embed(roots.resid)}}</div>
+                </div> 
+                <div class="divider"></div>
+        </div>
     </div>
     <script type="text/javascript" src="reflectance-plots/static/js/materialize.js"></script>
     <script type="text/javascript" src="reflectance-plots/static/js/all.js"></script>

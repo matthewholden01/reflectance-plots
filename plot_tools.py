@@ -39,31 +39,31 @@ def plot_spec(ds, myPalette, fig, index, visible, tags):
             renderers.append(r)
     return renderers
 
-def plot_lamb(ds, ds2, myPalette, fig, index, visible):
-    renderers = []
-    for name, name2, color in zip(ds.data, ds2.data, myPalette):
-        if name != index:
-            r = fig.line(index, name, color = color, line_width = .7, 
-                         source = ds, visible = visible, name = name, tags = ["white_lamb"])
-            f = fig.line(index, name2, color = color, line_width = .7, 
-                         source = ds2, visible = visible, line_dash = 'dashed', name = name2, tags = ["white_lamb"])
-            c = fig.circle(index, name2, color = color, source = ds2, visible = visible, 
-                           name = name2, tags = ["none"])
-            renderers.append(r)
-            renderers.append(f)
-            renderers.append(c)
-    return renderers
-
-def plot_dash_dots(ds, myPalette, fig, index, visible):
+def plot_lamb(ds, myPalette, fig, index, visible):
     renderers = []
     for name, color in zip(ds.data, myPalette):
         if name != index:
-            r = fig.line(index, name, line_width = .7, line_dash = 'dashed',
-                         color = color, source = ds, visible = visible, name = name, tags = ["white_res"])
-            f = fig.circle(index, name, color = color, source = ds, visible = visible,
-                           name = name, tags = ["none"])
+            r = fig.line(index, name, color = color, line_width = .7, 
+                         source = ds, visible = visible, name = name, tags = ["white_lamb"])
             renderers.append(r)
+    return renderers
+
+def plot_lamb_pow(ds, myPalette, fig, index, visible):
+    renderers = []
+    for name, color in zip(ds.data, myPalette):
+        if name != index:
+            f = fig.line(index, name, color=color, line_width=1,
+                         source=ds, visible=visible, line_dash='dotdash', name=name, tags=["white_lamb"])
             renderers.append(f)
+    return renderers
+
+def plot_resid(ds, myPalette, fig, index, visible):
+    renderers = []
+    for name, color in zip(ds.data, myPalette):
+        if name != index:
+            r = fig.line(index, name, line_width = 1, line_dash = 'dotdash',
+                         color = color, source = ds, visible = visible, name = name, tags = ["white_res"])
+            renderers.append(r)
     return renderers
 
 def make_label(figure, visibility):
